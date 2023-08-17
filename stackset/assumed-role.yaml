@@ -1,0 +1,25 @@
+Parameters:
+  beNukeAssumedRoleName: # remember to match it with the one in the CDK parameters
+    Description: Name for the IAM Role to be assumed by centralized nuke
+    Type: String
+    Default: beNuke-assumed-role
+
+  CentralizedNukeRole: # remember to match it with the one in the CDK parameters
+    Description: Name of the IAM Role that will assume the previous Role
+    Type: String
+    Default: arn:aws:iam::00000000000:role/beNuke-CodeBuildProjectRole # account ID of the central account (where CDK is deployed)
+
+Resources:
+  beNukeAssumedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref beNukeAssumedRoleName
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Ref CentralizedNukeRole
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess

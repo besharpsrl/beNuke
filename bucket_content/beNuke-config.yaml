@@ -1,0 +1,54 @@
+regions:
+- eu-west-1
+- global
+
+account-blocklist:
+- "000000000000" # Production account ID goes here
+
+resource-types:
+  excludes: # exclude this as will be already handled when you include S3Bucket/DynamoDBTable. Else takes a lot of time and logs get filled up
+  - S3Object
+  - DynamoDBTableItem
+
+accounts:
+  "000000000000": # account ID to be nuked
+    presets:
+      - nuke
+      - sso
+      - accessrole
+
+feature-flags:
+  disable-deletion-protection: # delition protection currently disabled!
+    RDSInstance: true
+    CloudformationStack: true
+    EC2Instance: true
+    ELBv2: true
+
+presets:
+  nuke:
+    filters:
+      CloudFormationStack:
+        - "beNuke-assumed-role"
+      IAMRole:
+        - "beNuke-assumed-role"
+      IAMRolePolicyAttachment:
+        - "beNuke-assumed-role -> AdministratorAccess"
+
+  sso:
+    filters:
+      IAMSAMLProvider:
+      - type: "regex"
+        value: "AWSSSO_.*_DO_NOT_DELETE"
+      IAMRole:
+      - type: "glob"
+        value: "AWSReservedSSO_*"
+      IAMRolePolicyAttachment:
+      - type: "glob"
+        value: "AWSReservedSSO_*"
+
+  accessrole:
+    filters:
+      IAMRole:
+        - "ROLE" # you may want to add your role used to access the account (below)
+      IAMRolePolicyAttachment:
+        - "ROLE*"
