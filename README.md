@@ -13,3 +13,6 @@ Super-minimal base infrastructure for running [aws-nuke](https://github.com/rebu
 
 5. Set `buttonEnabled = true` inside `parameters.ts` and run `cdk deploy` again
 6. In the AWS Console, go to the deployed Lambda Function (defaults to `iotNukeTrigger`) and select `Add trigger`. Select `AWS IoT` and enter the Device Serial Number written on the back of the button
+
+## Ready to nuke?
+In order to ensure that no unintentional data loss occurs, the script is intentionally left in *dry-run* mode. Also, no parameter is provided to easily switch the mode. To enable resource nuking, add `--no-dry-run` to the aws-nuke command in the BuildSpec. 
