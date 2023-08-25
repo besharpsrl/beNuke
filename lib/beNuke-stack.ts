@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { Project, Source, BuildSpec, LinuxArmBuildImage } from 'aws-cdk-lib/aws-codebuild';
+import { Project, Source, BuildSpec, LinuxArmBuildImage, ComputeType } from 'aws-cdk-lib/aws-codebuild';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { awsNukeVersion, buttonEnabled, codebuildRoleName, configBucketName, configFileName, functionName, targetRoleName } from '../parameters'
@@ -28,8 +28,10 @@ export class BeNukeStack extends cdk.Stack {
         path: ''
       }),
       environment: {
-        buildImage: LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_3_0
+        buildImage: LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_3_0,
+        computeType: ComputeType.SMALL
       },
+      timeout: cdk.Duration.hours(8),
       buildSpec: BuildSpec.fromObject({
         version: '0.2',
         phases: {
